@@ -17,14 +17,16 @@ The slides live separately and link here week by week.
 
 | Week | Folder | Subject |
 |---|---|---|
+| 2 | `w02-mapreduce/` | **optional** — MapReduce and Spark |
 | 3 | `w03-lsh/` | finding similar items |
 | 4 | `w04-stream/` | mining data streams |
 | 5 | `w05-pagerank/` | link analysis |
 | 6 | `w06-apriori/` | frequent itemsets |
 | 7 | `w07-kmeans/` | clustering |
 
-Week 2 is the coding-agent session and has no folder here. Weeks 9 – 15 are the
-project.
+Week 2's session is the coding agent, so `w02-mapreduce/` is **optional** — it
+exists because chapter 2 is otherwise the one chapter you are taught and never
+run. Weeks 9 – 15 are the project.
 
 ## How a week works
 
@@ -52,6 +54,24 @@ wNN-topic/
 | **Task 3 · improvement** | a deliberately naive implementation is committed here. Beat it, measured by `bench.py`, without changing the answer |
 
 There is no separate assignment. **The three tasks are the assignment.**
+
+### Optional task 4 — Spark
+
+Three weeks have a fourth task that uses **Spark**: `w02-mapreduce`,
+`w05-pagerank` and `w06-apriori`.
+
+**They are optional, not graded, and not part of the assignment.** Do them if
+your machine will run Spark; effort is noted, absence is not penalised.
+
+They exist because the course teaches MapReduce and Spark and never makes you run
+one. What they will show you is not what you expect: **on a single laptop Spark is
+slower**, by 369× on a word count and 3× on PageRank. That is the measured result
+and it is the point. What changes at scale — and what does not — is what these
+tasks ask you to explain.
+
+Spark needs **Java 8, 11 or 17** and `pip install pyspark`. A newer JDK fails with
+a gateway error. If it will not install, each task has a half that does not need
+it, and "it would not install" is an acceptable submission for an optional task.
 
 ## Submitting
 
@@ -81,10 +101,10 @@ make image          # build the Ubuntu 24.04 image, once
 make shell          # a shell inside it, with /work mounted
 ```
 
-`requirements.txt` adds `numpy`, `pandas`, `matplotlib`, `scipy`,
-`scikit-learn` and `pyspark` if you want them. **The tasks do not need them**,
-and Task 1 each week is explicitly about writing the method rather than calling
-a library that already has it.
+The image has **Java 17 and PySpark**, which is the easiest way to do the
+optional task 4s. `requirements.txt` also adds `numpy`, `pandas`, `matplotlib`,
+`scipy` and `scikit-learn`. **Tasks 1 to 3 need none of it**, and task 1 each week
+is explicitly about writing the method rather than calling a library that has it.
 
 ### GitHub Codespaces
 

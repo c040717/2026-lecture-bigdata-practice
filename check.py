@@ -10,6 +10,10 @@ import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 SPEC = {
+    "w02": ("w02-mapreduce", [
+        ("task4.txt",      "optional task 4 output", False),
+        ("observation.md", "what you found - optional", False),
+    ]),
     "w03": ("w03-lsh", [
         ("crossover.json", "timings from task2_crossover.py", True),
         ("curve.md",       "the curve and where it broke", True),
@@ -27,12 +31,14 @@ SPEC = {
         ("convergence.md",   "the iteration curve", True),
         ("bench.txt",        "python3 bench.py --yours", True),
         ("observation.md",   "2-3 lines per task", True),
+        ("task4.txt",        "optional task 4 output", False),
     ]),
     "w06": ("w06-apriori", [
         ("explosion.json", "runs from task2_explosion.py", True),
         ("explosion.md",   "the explosion curve", True),
         ("bench.txt",      "python3 bench.py --yours", True),
         ("observation.md", "2-3 lines per task", True),
+        ("task4.txt",      "optional task 4 output", False),
     ]),
     "w07": ("w07-kmeans", [
         ("curse.json",     "runs from task2_curse.py", True),
