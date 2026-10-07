@@ -1,6 +1,7 @@
 # student output
 */out/
 !w03-lsh/out/
+!w04-stream/out/
 
 # python
 __pycache__/
