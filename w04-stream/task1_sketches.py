@@ -14,6 +14,18 @@ approximating.
     python3 task1_sketches.py --verify
 """
 import argparse, random
+import hashlib
+import math
+import statistics
+import struct
+
+
+def bloom_positions(item, m, k, seed):
+    # 출력의 8바이트 구간마다 별도의 해시값을 얻어 비트 위치를 정한다.
+    digest = hashlib.shake_256(str(seed).encode() + b"|"
+                               + str(item).encode()).digest(8 * k)
+    for value in struct.unpack("<" + "Q" * k, digest):
+        yield value % m
 
 
 class BloomFilter:
@@ -28,13 +40,18 @@ class BloomFilter:
     """
 
     def __init__(self, m, k, seed=246):
-        raise NotImplementedError("write the Bloom filter")
+        if m <= 0 or k <= 0:
+            raise ValueError("m과 k는 양수여야 합니다")
+        self.m, self.k, self.seed = m, k, seed
+        self.bits = bytearray((m + 7) // 8)
 
     def add(self, item):
-        raise NotImplementedError
+        for position in bloom_positions(item, self.m, self.k, self.seed):
+            self.bits[position // 8] |= 1 << (position % 8)
 
     def __contains__(self, item):
-        raise NotImplementedError
+        return all(self.bits[position // 8] & (1 << (position % 8))
+                   for position in bloom_positions(item, self.m, self.k, self.seed))
 
     def expected_fp_rate(self, n_inserted):
         """The textbook's predicted false-positive rate after n insertions.
@@ -42,7 +59,33 @@ class BloomFilter:
         §4.4.2 derives it. Return the number, do not measure it - the harness
         measures separately and compares the two.
         """
-        raise NotImplementedError
+        if n_inserted < 0:
+            raise ValueError("삽입 개수는 음수일 수 없습니다")
+        return (-math.expm1(-self.k * n_inserted / self.m)) ** self.k
+
+
+def fm_estimates(stream, n_hashes=64, seed=246):
+    """각 해시의 최대 끝자리 0 개수로 추정값을 만든다."""
+    if n_hashes <= 0:
+        raise ValueError("해시 개수는 양수여야 합니다")
+    maxima = [0] * n_hashes
+    masks = [0] * n_hashes
+    unpacker = struct.Struct("<" + "Q" * n_hashes)
+    prefix = str(seed).encode() + b"|"
+    found = False
+    for item in stream:
+        found = True
+        # SHAKE의 출력에서 8바이트씩 나누어 여러 해시값으로 사용한다.
+        digest = hashlib.shake_256(prefix + str(item).encode()).digest(unpacker.size)
+        for i, value in enumerate(unpacker.unpack(digest)):
+            # 현재 최댓값보다 0이 적은 해시는 바로 건너뛴다.
+            if value & masks[i]:
+                continue
+            zeros = (value & -value).bit_length() - 1 if value else 64
+            if zeros > maxima[i]:
+                maxima[i] = zeros
+                masks[i] = (1 << zeros) - 1
+    return [float(2 ** r) for r in maxima] if found else [0.0] * n_hashes
 
 
 def flajolet_martin(stream, n_hashes=64, seed=246):
@@ -67,7 +110,8 @@ def flajolet_martin(stream, n_hashes=64, seed=246):
 
     Return your estimate as a float.
     """
-    raise NotImplementedError("write Flajolet-Martin")
+    # 큰 추정값 하나가 결과를 지배하지 않도록 중앙값을 사용한다.
+    return float(statistics.median(fm_estimates(stream, n_hashes, seed)))
 
 
 def reservoir_sample(stream, k, seed=246):
@@ -78,7 +122,21 @@ def reservoir_sample(stream, k, seed=246):
 
     Return a list of k items (or fewer if the stream was shorter).
     """
-    raise NotImplementedError("write reservoir sampling")
+    if k < 0:
+        raise ValueError("표본 개수는 음수일 수 없습니다")
+    if k == 0:
+        return []
+    rng = random.Random(seed)
+    sample = []
+    for count, item in enumerate(stream, 1):
+        if count <= k:
+            sample.append(item)
+        else:
+            # 지금까지 읽은 count개 중 k개에 들어갈 확률은 k/count다.
+            position = rng.randrange(count)
+            if position < k:
+                sample[position] = item
+    return sample
 
 
 # ------------------------------------------------------------------- harness

@@ -18,6 +18,9 @@ better score by occasionally forgetting something it was given has not improved
 anything, it has broken the contract.
 """
 import hashlib
+import sys
+
+from task1_sketches import bloom_positions
 
 
 class NaiveFilter:
@@ -64,14 +67,29 @@ class YourFilter:
     observation.md asks.
     """
 
+    __slots__ = ("bits", "seed")
+    K = 7
+
     def __init__(self, n_bits, seed=246):
-        raise NotImplementedError("write your filter")
+        self.seed = seed
+        # 객체, seed와 bytearray 관리 공간도 예산에 넣는다.
+        overhead = (sys.getsizeof(self) + sys.getsizeof(seed)
+                    + sys.getsizeof(bytearray(1)) - 1)
+        payload = n_bits // 8 - overhead
+        if payload <= 0:
+            raise ValueError("필터 객체를 저장하기에 메모리 예산이 너무 작습니다")
+        self.bits = bytearray(payload)
 
     def add(self, item):
-        raise NotImplementedError
+        for position in bloom_positions(item, len(self.bits) * 8, self.K, self.seed):
+            self.bits[position // 8] |= 1 << (position % 8)
 
     def __contains__(self, item):
-        raise NotImplementedError
+        return all(self.bits[position // 8] & (1 << (position % 8))
+                   for position in bloom_positions(item, len(self.bits) * 8,
+                                                   self.K, self.seed))
 
     def memory_bits(self):
-        raise NotImplementedError
+        # 공유하는 Python 코드와 실행 중 임시값을 제외한 필터의 저장 공간이다.
+        return 8 * (sys.getsizeof(self) + sys.getsizeof(self.bits)
+                    + sys.getsizeof(self.seed))
