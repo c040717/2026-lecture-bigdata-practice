@@ -59,7 +59,7 @@ def machine(background):
 
 
 def build_documents(n, seed=246):
-    """기존 벤치마크와 같은 방식으로 문서를 정확히 n개 만든다.
+    """기존 벤치마크의 생성 방식을 사용해 실험에 필요한 n개 문서를 만든다.
 
     bench.build()는 항상 2,120개만 반환하므로 여기서 데이터를 생성한다.
     Task 3의 bench.py는 수정하지 않는다.
