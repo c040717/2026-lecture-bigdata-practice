@@ -1,0 +1,68 @@
+{
+  "runs": [
+    {
+      "n": 100000,
+      "true_distinct": 36702,
+      "exact_s": 0.5484867999998642,
+      "exact_peak_bytes": 3925612,
+      "measured_at": "2026-10-07T14:07:02.493490+09:00",
+      "fm_hashes": 32,
+      "fm_estimate": 24576.0,
+      "fm_s": 18.658920699999726,
+      "fm_peak_bytes": 7974,
+      "fm_ratio": 0.6696092855975151
+    },
+    {
+      "n": 400000,
+      "true_distinct": 146970,
+      "exact_s": 5.119466199999806,
+      "exact_peak_bytes": 11591308,
+      "measured_at": "2026-10-07T14:07:26.330705+09:00",
+      "fm_hashes": 32,
+      "fm_estimate": 131072.0,
+      "fm_s": 52.438261299999795,
+      "fm_peak_bytes": 7975,
+      "fm_ratio": 0.8918282642716201
+    },
+    {
+      "n": 1600000,
+      "true_distinct": 587625,
+      "exact_s": 22.157668200000444,
+      "exact_peak_bytes": 46647606,
+      "measured_at": "2026-10-07T14:08:41.116936+09:00",
+      "fm_hashes": 32,
+      "fm_estimate": 524288.0,
+      "fm_s": 160.63551220000045,
+      "fm_peak_bytes": 7975,
+      "fm_ratio": 0.8922152733460966
+    },
+    {
+      "n": 6400000,
+      "true_distinct": 2349909,
+      "exact_s": 63.645156399999905,
+      "exact_peak_bytes": 188287586,
+      "measured_at": "2026-10-07T14:12:26.280224+09:00",
+      "fm_hashes": 32,
+      "fm_estimate": 2097152.0,
+      "fm_s": 1378.5591917000002,
+      "fm_peak_bytes": 7976,
+      "fm_ratio": 0.8924396646848878
+    }
+  ],
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "python": "3.12.6",
+    "background_workload": "Whale browser, ChatGPT/Codex, Windows Defender and normal background services",
+    "ram_bytes": 16837525504,
+    "ram_gib": 15.68,
+    "available_ram_bytes": 3814572032
+  },
+  "measurement": {
+    "seed": 246,
+    "distinct_ratio": 0.4,
+    "scope": "tracemalloc allocations during each complete stream pass",
+    "fm_hashes": 32,
+    "fm_combining_rule": "median of 2**R"
+  }
+}
