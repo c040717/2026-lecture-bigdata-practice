@@ -105,7 +105,7 @@ def main():
                "exact_peak_bytes": m_exact,
                "measured_at": datetime.now().astimezone().isoformat(),
                "fm_hashes": a.hashes}
-        # 추정 실험이 오래 걸려도 먼저 완료한 정확한 결과는 남긴다.
+        # FM 측정에 오래 걸릴 수 있으므로 집합 결과부터 저장한다.
         prior["runs"].append(row)
         with open(path, "w", encoding="utf-8") as handle:
             json.dump(prior, handle, indent=2, ensure_ascii=False)
