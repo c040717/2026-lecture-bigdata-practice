@@ -55,9 +55,8 @@ def minhash_signatures(columns, hashes, n_rows):
     hashes = list(hashes)
     signatures = [[float("inf")] * len(hashes) for _ in columns]
 
-    # Convert the supplied column sets to a row membership index. The actual
-    # signature update then visits each matrix row once, with hashes computed
-    # once per row and shared by every column containing that row.
+    # 각 행의 원소가 들어 있는 열 목록을 만든다.
+    # 행별 해시값을 한 번 계산해서 해당 열들의 최솟값을 갱신한다.
     row_columns = {}
     for column, rows in enumerate(columns):
         for row in rows:
@@ -92,7 +91,7 @@ def lsh_candidates(signatures, bands):
         return set()
     length = len(signatures[0])
     if not length or length % bands:
-        # Reject a remainder instead of silently discarding signature rows.
+        # 남는 행을 버리지 않고 잘못된 band 수를 오류로 처리한다.
         raise ValueError("signature length must be positive and divisible by bands")
     if any(len(signature) != length for signature in signatures):
         raise ValueError("all signatures must have the same length")

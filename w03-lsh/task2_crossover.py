@@ -59,10 +59,10 @@ def machine(background):
 
 
 def build_documents(n, seed=246):
-    """Generate exactly n documents, using the unchanged benchmark's schema.
+    """기존 벤치마크와 같은 방식으로 문서를 정확히 n개 만든다.
 
-    bench.build() always returns 2,120 documents; slicing it cannot scale past
-    that. Keep the Task 3 harness untouched and generate Task 2 data here.
+    bench.build()는 항상 2,120개만 반환하므로 여기서 데이터를 생성한다.
+    Task 3의 bench.py는 수정하지 않는다.
     """
     import bench
     if n <= 0:
@@ -138,7 +138,7 @@ def main():
         row.update({"lsh_s": t_lsh, "lsh_calls": sim2.calls,
                     "lsh_peak_bytes": m_lsh, "lsh_cpu_s": cpu_lsh})
         prior["runs"].append(row)
-        # Persist each completed size so a later expensive size cannot lose it.
+        # 다음 측정이 오래 걸려도 완료한 결과가 남도록 매번 저장한다.
         with open(path, "w", encoding="utf-8") as handle:
             json.dump(prior, handle, indent=2)
         line = f"  n={n:>6}  brute {t_brute:>8.2f}s  {c_brute:>12,} cmp"
