@@ -110,7 +110,7 @@
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
     "python": "3.12.6",
-    "background_workload": "Whale browser, ChatGPT/Codex, Windows Defender and normal Windows services running; no other benchmark launched concurrently",
+    "background_workload": "Whale browser, Windows Defender and normal Windows services running; no other benchmark launched concurrently",
     "ram_bytes": 16837525504,
     "ram_gib": 15.68
   },

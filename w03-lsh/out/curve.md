@@ -2,7 +2,7 @@
 
 ## 실험 환경
 
-2026년 10월 7일에 Intel i7-1165G7, 약 16 GB RAM(시스템 측정값 15.68 GiB), Windows 11, Python 3.12.6 환경에서 측정했다. Whale 브라우저, ChatGPT/Codex, Windows Defender와 일반 백그라운드 프로그램이 실행 중이었다.
+2026년 10월 7일에 Intel i7-1165G7, 약 16 GB RAM(시스템 측정값 15.68 GiB), Windows 11, Python 3.12.6 환경에서 측정했다. Whale 브라우저, Windows Defender와 일반 백그라운드 프로그램이 실행 중이었다.
 
 문서 수는 64개부터 4,096개까지 7가지로, 최대와 최소의 차이는 64배다. 두 방법에 같은 문서를 넣고 유사도 기준은 0.6으로 설정했다. 난수 seed는 246, 문서당 shingle은 60개, 전체 원소 종류는 5,000개다. 데이터 생성 시간은 제외하고, LSH의 signature 생성과 후보 선택 시간은 포함했다.
 
