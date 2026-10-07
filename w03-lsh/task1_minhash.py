@@ -55,8 +55,8 @@ def minhash_signatures(columns, hashes, n_rows):
     hashes = list(hashes)
     signatures = [[float("inf")] * len(hashes) for _ in columns]
 
-    # 각 행의 원소가 들어 있는 열 목록을 만든다.
-    # 행별 해시값을 한 번 계산해서 해당 열들의 최솟값을 갱신한다.
+    # 행마다 원소가 들어 있는 열을 모은다.
+    # 같은 행의 해시값을 재사용해 해당 열들의 최솟값을 갱신한다.
     row_columns = {}
     for column, rows in enumerate(columns):
         for row in rows:

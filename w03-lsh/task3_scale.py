@@ -85,8 +85,8 @@ class YourFinder:
         if self.threshold == 0:
             return BruteForce(0).find(docs, similarity)
 
-        # 원소마다 0부터 시작하는 행 번호를 붙인다.
-        # 이렇게 하면 원래 원소의 숫자가 커도 불필요한 행을 만들지 않는다.
+        # 등장한 원소에만 연속된 행 번호를 붙인다.
+        # 원소의 숫자가 커도 빈 행이 불필요하게 늘어나지 않는다.
         row_ids = {}
         columns = []
         for doc in docs:
