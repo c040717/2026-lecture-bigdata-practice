@@ -72,7 +72,7 @@ class YourFilter:
 
     def __init__(self, n_bits, seed=246):
         self.seed = seed
-        # 객체, seed와 bytearray 관리 공간도 예산에 넣는다.
+        # 비트 배열뿐 아니라 객체, seed와 배열 관리 공간까지 예산에 포함한다.
         overhead = (sys.getsizeof(self) + sys.getsizeof(seed)
                     + sys.getsizeof(bytearray(1)) - 1)
         payload = n_bits // 8 - overhead

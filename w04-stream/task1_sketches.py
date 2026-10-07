@@ -21,7 +21,7 @@ import struct
 
 
 def bloom_positions(item, m, k, seed):
-    # 출력의 8바이트 구간마다 별도의 해시값을 얻어 비트 위치를 정한다.
+    # 출력을 8바이트씩 나누어 각 해시가 가리키는 비트 위치를 구한다.
     digest = hashlib.shake_256(str(seed).encode() + b"|"
                                + str(item).encode()).digest(8 * k)
     for value in struct.unpack("<" + "Q" * k, digest):
