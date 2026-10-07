@@ -1,0 +1,9 @@
+  measuring n=1,024 ...
+  n=  1024  brute    10.50s       523,776 cmp   |  lsh   12.13s        119 cmp
+  measuring n=2,048 ...
+  n=  2048  brute    61.61s     2,096,128 cmp   |  lsh    4.66s        133 cmp
+  measuring n=4,096 ...
+  n=  4096  brute   192.48s     8,386,560 cmp   |  lsh   19.10s        157 cmp
+
+  -> out/crossover.json  (9 measurement(s))
+  Keep raising --sizes until something becomes unpleasant. Record where.

@@ -1,0 +1,125 @@
+{
+  "runs": [
+    {
+      "n": 64,
+      "actual_n": 64,
+      "brute_s": 0.02157420000003185,
+      "brute_calls": 2016,
+      "brute_peak_bytes": 7912,
+      "measured_at": "2026-10-07T13:18:11.441040+09:00",
+      "lsh_s": 1.1484903999999005,
+      "lsh_calls": 6,
+      "lsh_peak_bytes": 850720
+    },
+    {
+      "n": 128,
+      "actual_n": 128,
+      "brute_s": 0.10554639999986648,
+      "brute_calls": 8128,
+      "brute_peak_bytes": 7912,
+      "measured_at": "2026-10-07T13:18:12.711093+09:00",
+      "lsh_s": 1.4355363000001944,
+      "lsh_calls": 12,
+      "lsh_peak_bytes": 1495096
+    },
+    {
+      "n": 256,
+      "actual_n": 256,
+      "brute_s": 0.2729039000000739,
+      "brute_calls": 32640,
+      "brute_peak_bytes": 9448,
+      "measured_at": "2026-10-07T13:18:14.431679+09:00",
+      "lsh_s": 1.993055400000003,
+      "lsh_calls": 29,
+      "lsh_peak_bytes": 2245720
+    },
+    {
+      "n": 512,
+      "actual_n": 512,
+      "brute_s": 1.13721489999989,
+      "brute_calls": 130816,
+      "brute_peak_bytes": 11080,
+      "measured_at": "2026-10-07T13:18:17.578905+09:00",
+      "lsh_s": 2.2393692000000556,
+      "lsh_calls": 52,
+      "lsh_peak_bytes": 3498228
+    },
+    {
+      "n": 1024,
+      "actual_n": 1024,
+      "brute_s": 4.748607700000093,
+      "brute_calls": 523776,
+      "brute_peak_bytes": 20264,
+      "measured_at": "2026-10-07T13:18:24.603960+09:00",
+      "lsh_s": 2.69992000000002,
+      "lsh_calls": 119,
+      "lsh_peak_bytes": 5693688
+    },
+    {
+      "n": 2048,
+      "actual_n": 2048,
+      "brute_s": 41.80516230000012,
+      "brute_calls": 2096128,
+      "brute_peak_bytes": 22472,
+      "measured_at": "2026-10-07T13:19:09.182747+09:00",
+      "lsh_s": 12.857990800000152,
+      "lsh_calls": 133,
+      "lsh_peak_bytes": 9823000
+    },
+    {
+      "n": 1024,
+      "actual_n": 1024,
+      "brute_s": 10.502488400000175,
+      "brute_calls": 523776,
+      "brute_peak_bytes": 24688,
+      "brute_cpu_s": 10.109375,
+      "measured_at": "2026-10-07T13:20:26.144343+09:00",
+      "lsh_s": 12.127198399999997,
+      "lsh_calls": 119,
+      "lsh_peak_bytes": 5693952,
+      "lsh_cpu_s": 11.34375
+    },
+    {
+      "n": 2048,
+      "actual_n": 2048,
+      "brute_s": 61.61368749999997,
+      "brute_calls": 2096128,
+      "brute_peak_bytes": 22472,
+      "brute_cpu_s": 59.1875,
+      "measured_at": "2026-10-07T13:21:40.163657+09:00",
+      "lsh_s": 4.6579911000001175,
+      "lsh_calls": 133,
+      "lsh_peak_bytes": 9823000,
+      "lsh_cpu_s": 4.390625
+    },
+    {
+      "n": 4096,
+      "actual_n": 4096,
+      "brute_s": 192.48295050000002,
+      "brute_calls": 8386560,
+      "brute_peak_bytes": 22824,
+      "brute_cpu_s": 182.171875,
+      "measured_at": "2026-10-07T13:24:57.531547+09:00",
+      "lsh_s": 19.097403900000018,
+      "lsh_calls": 157,
+      "lsh_peak_bytes": 17904120,
+      "lsh_cpu_s": 16.296875
+    }
+  ],
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "python": "3.12.6",
+    "background_workload": "Whale browser, ChatGPT/Codex, Windows Defender and normal Windows services running; no other benchmark launched concurrently",
+    "ram_bytes": 16837525504,
+    "ram_gib": 15.68
+  },
+  "measurement": {
+    "seed": 246,
+    "shingles": 60,
+    "vocabulary": 5000,
+    "threshold": 0.6,
+    "peak_memory_scope": "tracemalloc allocations inside find; input data excluded",
+    "dataset": "exact n; random base documents plus min(120, n//10) clones"
+  }
+}

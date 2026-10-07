@@ -1,0 +1,24 @@
+[
+  {
+    "hash_count": 120,
+    "bands": 30,
+    "rows_per_band": 4,
+    "step": 0.42728700639623407,
+    "candidate_probability_at_0.6": 0.9844558681786542,
+    "comparisons": 125,
+    "found": 121,
+    "true_pairs": 121,
+    "recall": 1.0
+  },
+  {
+    "hash_count": 120,
+    "bands": 6,
+    "rows_per_band": 20,
+    "step": 0.914307826761828,
+    "candidate_probability_at_0.6": 0.00021934945613977241,
+    "comparisons": 7,
+    "found": 7,
+    "true_pairs": 121,
+    "recall": 0.05785123966942149
+  }
+]
