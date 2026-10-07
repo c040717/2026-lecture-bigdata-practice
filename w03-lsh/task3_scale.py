@@ -17,6 +17,10 @@ It also checks **recall** - which of the truly similar pairs you found. Skipping
 comparisons is easy; skipping comparisons without losing the pairs is the task.
 """
 
+import random
+
+from task1_minhash import lsh_candidates, minhash_signatures
+
 
 class BruteForce:
     """Correct, and quadratic."""
@@ -60,8 +64,39 @@ class YourFinder:
     You may reuse your Task 1 code.
     """
 
-    def __init__(self, threshold):
-        raise NotImplementedError("write your finder")
+    def __init__(self, threshold, hash_count=120, bands=30, seed=246):
+        if not 0 <= threshold <= 1:
+            raise ValueError("threshold must be in [0, 1]")
+        if hash_count <= 0 or bands <= 0 or hash_count % bands:
+            raise ValueError("hash_count must be positive and divisible by bands")
+        self.threshold = threshold
+        self.hash_count = hash_count
+        self.bands = bands
+        rng = random.Random(seed)
+        prime = 2_147_483_647
+        self.hashes = []
+        for _ in range(hash_count):
+            a, b = rng.randrange(1, prime), rng.randrange(prime)
+            self.hashes.append(lambda row, a=a, b=b: (a * row + b) % prime)
 
     def find(self, docs, similarity):
-        raise NotImplementedError
+        if len(docs) < 2:
+            return set()
+        if self.threshold == 0:
+            return BruteForce(0).find(docs, similarity)
+
+        # Dense row IDs also support non-integer shingles without allocating a
+        # matrix up to the largest original shingle value.
+        row_ids = {}
+        columns = []
+        for doc in docs:
+            column = set()
+            for shingle in doc:
+                if shingle not in row_ids:
+                    row_ids[shingle] = len(row_ids)
+                column.add(row_ids[shingle])
+            columns.append(column)
+        signatures = minhash_signatures(columns, self.hashes, len(row_ids))
+        candidates = lsh_candidates(signatures, self.bands)
+        return {(i, j) for i, j in candidates
+                if similarity(docs[i], docs[j]) >= self.threshold}
