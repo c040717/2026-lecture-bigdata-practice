@@ -1,20 +1,18 @@
-# Task 2: measured crossover and scaling
+# Task 2 실험 결과
 
-## Machine and procedure (A1, A2, A6)
+## 실험 환경
 
-Measured on 7 October 2026: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz; 15.68 GiB usable RAM (nominally 16 GB); Windows-11-10.0.26200-SP0; Python 3.12.6.
+2026년 10월 7일에 Intel i7-1165G7, 약 16 GB RAM(시스템 측정값 15.68 GiB), Windows 11, Python 3.12.6 환경에서 측정했다. Whale 브라우저, ChatGPT/Codex, Windows Defender와 일반 백그라운드 프로그램이 실행 중이었다.
 
-Whale browser, ChatGPT/Codex, Windows Defender and normal Windows services running; no other benchmark launched concurrently. The machine was not an isolated benchmark environment.
+문서 수는 64개부터 4,096개까지 7가지로, 최대와 최소의 차이는 64배다. 두 방법에 같은 문서를 넣고 유사도 기준은 0.6으로 설정했다. 난수 seed는 246, 문서당 shingle은 60개, 전체 원소 종류는 5,000개다. 데이터 생성 시간은 제외하고, LSH의 signature 생성과 후보 선택 시간은 포함했다.
 
-There are 7 distinct sizes from 64 to 4096 (64x). Documents are generated with seed 246, 60 shingles and a vocabulary of 5,000. Both methods receive the same input and threshold 0.6. Generation occurs before timing; LSH signature construction and candidate filtering are inside timing. No benchmark was run concurrently.
+기존의 `bench.build()[:n]`은 문서를 최대 2,120개까지만 만들 수 있었다. Task 2에서 문서를 정확히 n개 생성하도록 수정했고, 비슷한 문서 쌍은 min(120, n//10)개를 넣었다. 실제 문서 수와 전체 비교 횟수 n(n-1)/2를 확인하도록 했으며, `bench.py`는 수정하지 않았다.
 
-The provided measurement script used `bench.build()[:n]`, which could never generate more than 2,120 documents. Task 2 now has its own fixed-seed generator that makes exactly n documents with min(120, n//10) planted clones. `actual_n` and the assertion `brute_calls == n*(n-1)//2` verify the size; the Task 3 `bench.py` is unchanged.
+## 시간과 메모리
 
-## Time and peak allocation table (A3, A5)
+아래는 각 크기에서 처음 얻은 결과다. 재측정 결과도 아래에 따로 표시했고, 원래 값은 `crossover.json`에 저장되어 있다.
 
-These are the first measurements at each size; repeats are retained below and in the JSON, rather than replaced with more convenient numbers.
-
-| n | Brute seconds | LSH seconds | Brute comparisons | LSH comparisons | Brute peak KiB | LSH peak MiB |
+| 문서 수 | 전체 비교 시간(초) | LSH 시간(초) | 전체 비교 횟수 | LSH 비교 횟수 | 전체 비교 최대 추가 할당(KiB) | LSH 최대 추가 할당(MiB) |
 |---:|---:|---:|---:|---:|---:|---:|
 | 64 | 0.0216 | 1.1485 | 2,016 | 6 | 7.73 | 0.81 |
 | 128 | 0.1055 | 1.4355 | 8,128 | 12 | 7.73 | 1.43 |
@@ -24,48 +22,48 @@ These are the first measurements at each size; repeats are retained below and in
 | 2,048 | 41.8052 | 12.8580 | 2,096,128 | 133 | 21.95 | 9.37 |
 | 4,096 | 192.4830 | 19.0974 | 8,386,560 | 157 | 22.29 | 17.07 |
 
-At the largest completed size n=4,096, peak traced allocation was 22,824 bytes for brute force and 17,904,120 bytes for LSH. These peaks cover allocations inside `find`, including its result, and exclude the already-built input documents. They are not total process RAM or peak system memory. `tracemalloc` was enabled for both methods, so the reported times include profiling overhead; brute force holds little scratch state, while LSH stores row IDs, memberships, signatures and buckets.
+가장 큰 문서 수인 4,096개에서 최대 추가 할당량은 전체 비교 22,824바이트, LSH 17,904,120바이트였다. `tracemalloc`으로 `find` 실행 중 할당량을 측정했으므로 입력 문서와 Python 전체 메모리는 포함하지 않는다. 시간에는 이 측정 도구의 추가 비용도 들어 있다. LSH는 signature, 행별 목록과 bucket을 저장해서 추가 메모리를 더 사용했다.
 
-## Check the quadratic claim with the measurements (A4)
+## 문서 수를 2배로 늘리면 시간이 약 4배가 되는가?
 
-| Size doubled | Brute time ratio | Brute comparison ratio |
+| 문서 수 변화 | 전체 비교 시간 증가율 | 비교 횟수 증가율 |
 |---|---:|---:|
-| 64 -> 128 | 4.89x | 4.032x |
-| 128 -> 256 | 2.59x | 4.016x |
-| 256 -> 512 | 4.17x | 4.008x |
-| 512 -> 1,024 | 4.18x | 4.004x |
-| 1,024 -> 2,048 | 8.80x | 4.002x |
-| 2,048 -> 4,096 | 4.60x | 4.001x |
+| 64 → 128 | 4.89배 | 4.032배 |
+| 128 → 256 | 2.59배 | 4.016배 |
+| 256 → 512 | 4.17배 | 4.008배 |
+| 512 → 1,024 | 4.18배 | 4.004배 |
+| 1,024 → 2,048 | 8.80배 | 4.002배 |
+| 2,048 → 4,096 | 4.60배 | 4.001배 |
 
-The 256->512 and 512->1,024 time ratios are 4.17x and 4.18x, close to the expected 4x. Other timings do not all fit that constant-factor model. The comparison counts do: each is exactly n(n-1)/2. Doubling work therefore approaches 4x, but the wall-clock constants were unstable in this session.
+256→512, 512→1,024에서는 시간이 4.17배, 4.18배로 늘어 약 4배에 가까웠다. 나머지 구간에는 편차가 있었다. 비교 횟수는 항상 n(n-1)/2였고, 문서 수가 2배가 되면 약 4배로 늘었다.
 
-To investigate, the same fixed-seed 1,024 and 2,048 inputs were measured again, with process CPU time added to distinguish computation from time spent waiting for scheduling. Both repeats and their peaks are preserved:
+시간 편차를 확인하려고 문서 1,024개와 2,048개를 다시 측정하고 CPU 사용 시간도 기록했다. 4,096개는 이 추가 실행에서 처음 측정한 값이다.
 
-| Follow-up n | Brute wall s | Brute CPU s | LSH wall s | LSH CPU s |
+| 문서 수 | 전체 비교 실제 시간(초) | 전체 비교 CPU 시간(초) | LSH 실제 시간(초) | LSH CPU 시간(초) |
 |---:|---:|---:|---:|---:|
 | 1,024 | 10.5025 | 10.1094 | 12.1272 | 11.3438 |
 | 2,048 | 61.6137 | 59.1875 | 4.6580 | 4.3906 |
 | 4,096 | 192.4830 | 182.1719 | 19.0974 | 16.2969 |
 
-The repeated 1,024->2,048 brute time ratio was 5.87x. CPU time was close to wall time, so off-CPU scheduling delay alone does not explain the variation. The actual document counts and comparison counts rule out the original truncation bug. Power/frequency changes, cache/allocation effects, profiling overhead and background applications are plausible contributors; their individual contributions were not isolated. These measurements support quadratic comparison growth, not an assertion that every observed time quadrupled. A precise timing threshold would need controlled repeated trials.
+재측정에서 전체 비교 시간은 61.6137/10.5025≈5.87배가 되었다. CPU 시간도 실제 시간과 비슷해서 CPU를 기다리는 시간만으로 편차를 설명하기는 어렵다. 전원 설정, CPU 속도 변화, 백그라운드 프로그램과 메모리 측정 비용 등이 영향을 줄 수 있지만 원인을 따로 확인하지는 못했다. 비교 횟수의 증가는 이차식과 맞았으나 실제 시간이 항상 4배가 되는 것은 아니었다.
 
-## Crossover and startup cost (A7, A8)
+## 두 방법의 속도가 역전되는 구간
 
-In the first sweep, brute force won at n=512 (1.14s versus 2.24s); LSH first won at the sampled n=1,024 (2.70s versus 4.75s). That sweep brackets a crossing between 512 and 1,024. On repeating n=1,024, brute force won again, while LSH won at repeated n=2,048. Thus the observed crossing region across trials is 512-2,048; n=1,024 is the first sweep's sampled crossover, not a stable hardware constant.
+첫 실행에서 문서 512개는 전체 비교가 빨랐고(1.14초, LSH 2.24초), 1,024개에서는 LSH가 빨랐다(2.70초, 전체 비교 4.75초). 다시 측정했을 때는 1,024개에서 전체 비교가 빨랐고 2,048개에서 LSH가 빨랐다. 처음 관찰한 역전 지점은 1,024개였지만, 전체 결과를 보면 512~2,048개 사이의 구간으로 보는 것이 적절하다.
 
-For small n, LSH pays to map shingles into row IDs, build the row membership index, evaluate 120 hashes for each occupied row, update document signatures, form 30 band keys per document, and allocate bucket/candidate sets. Brute force can immediately compare its few pairs. The LSH preprocessing is roughly linear in document count for fixed signature/shingle lengths, but its constant and its traced allocation cost are substantial.
+문서 수가 적을 때 LSH가 느린 이유는 비교 전에 해시 계산, signature 생성, band 분할과 bucket 생성이 필요하기 때문이다. 비교할 쌍이 적으면 모든 쌍을 바로 비교하는 편이 이런 준비 작업보다 빠를 수 있다.
 
-## Where the machine became unpleasant (A2)
+## 오래 기다리게 된 크기
 
-The first recorded one-minute wait occurred at n=2,048: brute force took 61.61s, versus 4.66s for LSH. Time became unpleasant before memory; no out-of-memory error was observed. The largest completed measurement was n=4,096, taking 192.48s for brute force and 19.10s for LSH. No RAM exhaustion limit is claimed.
+문서 2,048개의 재측정에서 전체 비교는 61.61초가 걸렸다. 4,096개에서는 192.48초가 걸렸고, LSH는 19.10초였다. 메모리 부족 오류는 없었고 기다리는 시간이 먼저 문제가 되었다.
 
-## Reproduce
+## 다시 실행하는 방법
 
-From `w03-lsh/`, using the installed Windows Python launcher:
+저장소의 `w03-lsh` 폴더에서 실행한다. `--background` 뒤에는 실행 중인 다른 프로그램을 적는다.
 
 ```powershell
-py -3 task2_crossover.py --sizes 64,128,256,512,1024,2048 --background 'Describe other running apps'
-py -3 task2_crossover.py --sizes 1024,2048,4096 --background 'Describe other running apps'
+py -3 task2_crossover.py --sizes 64,128,256,512,1024,2048 --background '실행 중인 프로그램'
+py -3 task2_crossover.py --sizes 1024,2048,4096 --background '실행 중인 프로그램'
 ```
 
-The script appends new measurements; older measurements are preserved.
+새 측정값은 `crossover.json`에 추가된다.

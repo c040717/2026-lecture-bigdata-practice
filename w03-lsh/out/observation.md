@@ -1,16 +1,16 @@
-# Week 3 observations
+# 3주차 관찰 기록
 
 ## Task 1
-The textbook example passed: each row's hashes are computed once and shared across its present columns, instead of rescanning per column; the supplied column sets are indexed by row using O(nnz) extra space, which a row-stream input could avoid.
-If signature length is not divisible by bands, I raise ValueError instead of dropping leftover rows; empty-set Jaccard is 0.
-S1/S4 have a two-hash estimate of 1.0 but true Jaccard 2/3: increasing the hash count reduces sampling variation (approximately 1/sqrt(k)), at the cost of O(kD) signatures and more updates.
+행을 한 번씩 읽으면 같은 원소의 해시값을 여러 열에서 함께 쓸 수 있어 중복 계산을 줄일 수 있다.
+signature 길이가 band 수로 나누어떨어지지 않으면 남는 행을 버리지 않고 ValueError를 발생시키도록 했다.
+해시 2개로 구한 S1과 S4의 유사도 추정값은 1.0이지만 실제 Jaccard 유사도는 2/3이다. 해시를 늘리면 추정이 더 안정적이지만 계산량과 저장 공간도 늘어난다.
 
 ## Task 2
-On an i7-1165G7 with 15.68 GiB RAM, Windows 11/Python 3.12.6 and browser/Codex/background services running, 7 sizes spanned 64-4096 (64x); LSH first won at sampled n=1,024, but repeat timing moved the crossing into a wider 512-2,048 region.
-Brute comparisons followed n(n-1)/2 exactly; the 256->512 and 512->1,024 time ratios were 4.17x and 4.18x, whereas repeats varied, so I do not claim every measured time quadrupled (details in curve.md).
-Time became unpleasant first at n=2,048 (61.61s brute); at largest n=4,096, traced peaks were 22,824 bytes brute/17,904,120 bytes LSH, excluding input data, with no RAM exhaustion observed.
+i7-1165G7, 약 16 GB RAM에서 브라우저, Codex와 백그라운드 프로그램이 실행 중인 상태로 측정했다. 처음에는 문서 1,024개부터 LSH가 빨랐지만, 재측정 결과까지 보면 역전 구간은 512~2,048개 사이였다.
+문서 수를 256→512, 512→1,024로 늘렸을 때 전체 비교 방식의 시간은 각각 4.17배, 4.18배가 되었다. 다른 측정에서는 편차가 있었지만 비교 횟수는 항상 n(n-1)/2였다.
+문서 2,048개에서 전체 비교에 61.61초가 걸려 메모리보다 기다리는 시간이 먼저 문제가 되었다. 4,096개에서 find 실행 중 최대 추가 할당량은 전체 비교 약 22.29 KiB, LSH 약 17.07 MiB였으며 입력 문서는 포함하지 않았다.
 
 ## Task 3
-With k=120, b=30, r=4, the S-curve step is (1/30)^(1/4)=0.4273 and P(candidate|s=0.6)=1-(1-0.6^4)^30=0.9845; placing the step below 0.6 favors recall and permits some extra candidates.
-The unchanged benchmark found all 121 true pairs with 125 comparisons versus 2,246,140 (100% recall/precision, 99.9944% avoided); moving to b=6, r=20 put the step at 0.9143 and reduced recall to 7/121=5.79%, showing the price of overly strict bands.
-Comparison-only scoring hides hashing/index/signature costs: they already dominate at small n in Task 2, and at millions of documents O(nk) signature/index memory and memory bandwidth can become limiting even with few final comparisons.
+해시 120개를 30개 band로 나누어 band마다 4개 값을 넣었다. 경계 근삿값은 (1/30)^(1/4)≈0.4273으로 기준 0.6보다 낮아 비슷한 쌍을 덜 놓치는 쪽이며, 유사도 0.6인 쌍의 후보 확률은 1-(1-0.6^4)^30≈0.9845이다.
+전체 비교의 2,246,140회 대신 125회만 비교해서 정답 121쌍을 모두 찾았다. 6개 band에 각각 20개 값을 넣으니 경계가 약 0.9143으로 올라가고 정답을 7쌍만 찾아 재현율이 5.79%로 떨어졌다.
+채점에서는 문서 비교 횟수만 세지만, 해시와 signature를 만드는 시간도 필요하다. 문서가 수백만 개로 늘어나면 이 준비 작업과 signature를 저장하는 메모리도 부담이 될 수 있다.
