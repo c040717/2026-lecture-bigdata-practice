@@ -85,8 +85,8 @@ class YourFinder:
         if self.threshold == 0:
             return BruteForce(0).find(docs, similarity)
 
-        # Dense row IDs also support non-integer shingles without allocating a
-        # matrix up to the largest original shingle value.
+        # 원소마다 0부터 시작하는 행 번호를 붙인다.
+        # 이렇게 하면 원래 원소의 숫자가 커도 불필요한 행을 만들지 않는다.
         row_ids = {}
         columns = []
         for doc in docs:
