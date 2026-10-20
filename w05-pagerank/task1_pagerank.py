@@ -41,29 +41,29 @@ def pagerank(graph, beta=0.85, iterations=100, tol=1e-10):
     you should call it converged. Return the ranks, and set `pagerank.iterations`
     to how many you actually used, because Task 2 measures that.
     """
-    pagerank.iterations = 0
     n = len(graph)
+    pagerank.iterations = 0
     if n == 0:
         return {}
 
-    ranks = {node: 1.0 / n for node in graph}
+    rank = {node: 1.0 / n for node in graph}
     for step in range(iterations):
-        # dead end에 모인 점수를 모든 페이지에 고르게 나누어 총합을 유지한다.
-        dangling = sum(ranks[node] for node, links in graph.items() if not links)
-        baseline = (1.0 - beta + beta * dangling) / n
-        updated = {node: baseline for node in graph}
+        # dead end의 점수를 모든 페이지에 고르게 나누어 총합을 유지한다.
+        dead_rank = sum(rank[node] for node, links in graph.items() if not links)
+        base = (1 - beta) / n + beta * dead_rank / n
+        next_rank = {node: base for node in graph}
         for node, links in graph.items():
             if links:
-                share = beta * ranks[node] / len(links)
+                share = beta * rank[node] / len(links)
                 for target in links:
-                    updated[target] += share
+                    next_rank[target] += share
 
-        change = sum(abs(updated[node] - ranks[node]) for node in graph)
-        ranks = updated
+        change = sum(abs(next_rank[node] - rank[node]) for node in graph)
+        rank = next_rank
         pagerank.iterations = step + 1
         if change < tol:
             break
-    return ranks
+    return rank
 
 
 def pagerank_no_teleport(graph, iterations=100):
@@ -76,17 +76,17 @@ def pagerank_no_teleport(graph, iterations=100):
     if n == 0:
         return {}
 
-    ranks = {node: 1.0 / n for node in graph}
+    rank = {node: 1.0 / n for node in graph}
     for _ in range(iterations):
-        updated = {node: 0.0 for node in graph}
+        next_rank = {node: 0.0 for node in graph}
         for node, links in graph.items():
+            # 고장 버전에서는 dead end의 점수를 다시 분배하지 않는다.
             if links:
-                share = ranks[node] / len(links)
+                share = rank[node] / len(links)
                 for target in links:
-                    updated[target] += share
-        # 고장 버전에서는 dead end의 점수를 다시 나누지 않아 총합이 줄어든다.
-        ranks = updated
-    return ranks
+                    next_rank[target] += share
+        rank = next_rank
+    return rank
 
 
 # ------------------------------------------------------------------- harness

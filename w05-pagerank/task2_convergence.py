@@ -15,32 +15,45 @@ Your timings are about your hardware. The iteration counts are not - those are
 about the mathematics, and everybody should get the same ones.
 """
 import argparse, json, os, platform, time
-from datetime import datetime, timezone
+from datetime import datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out")
 
 
-def machine(background=None):
+def machine(background):
     info = {"platform": platform.platform(),
             "processor": platform.processor() or platform.machine(),
             "python": platform.python_version(),
             "logical_cpus": os.cpu_count(),
             "ram_bytes": None,
-            "background": background or "Not recorded"}
-    if platform.system() == "Windows":
+            "background": background}
+    if os.name == "nt":
         import ctypes
         import winreg
         try:
             with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
-                                r"HARDWARE\DESCRIPTION\System\CentralProcessor\0") as key:
+                               r"HARDWARE\DESCRIPTION\System\CentralProcessor\0") as key:
                 info["processor"] = winreg.QueryValueEx(key, "ProcessorNameString")[0].strip()
             ram_kb = ctypes.c_ulonglong()
             if ctypes.windll.kernel32.GetPhysicallyInstalledSystemMemory(ctypes.byref(ram_kb)):
                 info["ram_bytes"] = ram_kb.value * 1024
         except OSError:
-            pass  # 확인할 수 없는 하드웨어 정보는 비워 둔다.
+            pass  # 읽지 못한 정보는 추정해서 채우지 않는다.
     return info
+
+
+def residual(graph, ranks, beta):
+    n = len(graph)
+    dangling = sum(ranks[node] for node in graph if not graph[node])
+    base = (1 - beta + beta * dangling) / n
+    updated = dict.fromkeys(graph, base)
+    for node, links in graph.items():
+        if links:
+            share = beta * ranks[node] / len(links)
+            for target in links:
+                updated[target] += share
+    return sum(abs(updated[node] - ranks[node]) for node in graph)
 
 
 def main():
@@ -49,17 +62,15 @@ def main():
     p.add_argument("--nodes", type=int, default=None,
                    help="graph size; default is the harness graph")
     p.add_argument("--tol", type=float, default=1e-10)
-    p.add_argument("--max-iter", type=int, default=5000,
-                   help="iteration limit; near-one beta may need more than 500")
-    p.add_argument("--background", help="observed applications running during measurement")
+    p.add_argument("--max-iter", type=int, default=5000)
+    p.add_argument("--background", default="Not recorded",
+                   help="other applications running during the measurement")
     a = p.parse_args()
     betas = [float(x) for x in a.betas.split(",")]
-    if any(not 0 <= beta < 1 for beta in betas):
-        p.error("each beta must be at least 0 and less than 1")
-    if a.tol <= 0 or a.max_iter < 1:
-        p.error("tol and max-iter must be positive")
-    if a.nodes is not None and a.nodes < 50:
-        p.error("the harness graph generator needs at least 50 nodes")
+    if not all(0 <= beta < 1 for beta in betas) or a.tol <= 0 or a.max_iter < 1:
+        p.error("use 0 <= beta < 1, tol > 0, and max-iter >= 1")
+    if a.nodes is not None and a.nodes < 40:
+        p.error("the harness graph needs at least 40 nodes")
     os.makedirs(OUT, exist_ok=True)
 
     import bench
@@ -71,30 +82,22 @@ def main():
 
     rows = []
     for beta in betas:
+        measured_at = datetime.now().astimezone().isoformat(timespec="seconds")
         t0 = time.perf_counter()
         ranks = pagerank(graph, beta=beta, iterations=a.max_iter, tol=a.tol)
         elapsed = time.perf_counter() - t0
         iters = getattr(pagerank, "iterations", None)
         top = sorted(ranks.items(), key=lambda kv: -kv[1])[:10]
-        # 시간 측정을 마친 뒤 한 번 더 계산해 수렴 여부를 확인한다.
-        n = len(graph)
-        dangling = sum(ranks[v] for v, outs in graph.items() if not outs)
-        base = (1 - beta + beta * dangling) / n
-        updated = dict.fromkeys(graph, base)
-        for v, outs in graph.items():
-            if outs:
-                share = beta * ranks[v] / len(outs)
-                for w in outs:
-                    updated[w] += share
-        residual = sum(abs(updated[v] - ranks[v]) for v in graph)
+        # 정렬과 수렴 여부를 확인하는 시간은 측정에서 제외한다.
+        error = residual(graph, ranks, beta)
         rows.append({"beta": beta, "nodes": len(graph), "tol": a.tol,
                      "iterations": iters, "seconds": elapsed,
-                     "max_iterations": a.max_iter,
-                     "converged": residual < a.tol,
-                     "l1_residual": residual,
-                     "rank_sum": sum(ranks.values()),
-                     "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
-                     "top10": [k for k, _ in top]})
+                     "top10": [k for k, _ in top],
+                     "top10_scores": [value for _, value in top],
+                     "edges": sum(len(links) for links in graph.values()),
+                     "rank_sum": sum(ranks.values()), "residual_l1": error,
+                     "converged": error < a.tol, "max_iter": a.max_iter,
+                     "measured_at": measured_at})
         print(f"  beta {beta:<5}  {str(iters):>4} iterations  {elapsed:>7.3f}s   "
               f"top: {', '.join(k for k, _ in top[:3])}")
 
@@ -103,11 +106,15 @@ def main():
         with open(path, encoding="utf-8") as f:
             prior = json.load(f)
     else:
-        prior = {"runs": []}
-    prior["machine"] = machine(a.background)
+        prior = {"runs": [], "seed": bench.SEED}
+    current_machine = machine(a.background)
+    if "machine" in prior and prior["machine"] != current_machine:
+        raise ValueError("The measurement environment differs from the saved runs.")
+    prior["machine"] = current_machine
     prior["runs"].extend(rows)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(prior, f, indent=2)
+        f.write("\n")
     print(f"\n  -> out/convergence.json  ({len(prior['runs'])} run(s))")
 
 

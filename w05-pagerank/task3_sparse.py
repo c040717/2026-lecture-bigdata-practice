@@ -88,44 +88,38 @@ class YourPageRank:
     def __init__(self, beta=0.85, tol=1e-10, max_iter=100):
         self.beta, self.tol, self.max_iter = beta, tol, max_iter
         self.iterations = 0
-        self._peak_floats = 2  # 아직 그래프를 읽기 전이므로 beta와 tol만 센다.
+        self._float_peak = 2
 
     def run(self, graph):
         n = len(graph)
         self.iterations = 0
-        self._peak_floats = 2
-        if not n:
+        if n == 0:
+            self._float_peak = 2
             return {}
 
-        # 입력 인접 리스트와 점수 사전 두 개만 사용한다.
-        # 사전의 키는 원래 노드 이름을 그대로 쓴다.
-        ranks = dict.fromkeys(graph, 1.0 / n)
-        next_ranks = dict.fromkeys(graph, 0.0)
-        self._peak_floats = 2 * n + 8
+        rank = {v: 1.0 / n for v in graph}
+        next_rank = {v: 0.0 for v in graph}
+        # rank 벡터 2개와 매개변수, 계산 중 임시 float를 포함한 상한이다.
+        self._float_peak = 2 * n + 12
 
         for self.iterations in range(1, self.max_iter + 1):
-            dangling = sum(ranks[v] for v, outs in graph.items() if not outs)
-            base = (1.0 - self.beta + self.beta * dangling) / n
-            for v in next_ranks:
-                next_ranks[v] = base
+            dangling = sum(rank[v] for v, outs in graph.items() if not outs)
+            common = (1 - self.beta + self.beta * dangling) / n
+            # 순간 이동과 dead end 분배는 모든 노드에 같은 값으로 더한다.
+            for v in graph:
+                next_rank[v] = common
 
-            # 순간이동과 dead end 몫은 위에서 한 번에 반영하고,
-            # 여기서는 실제 간선을 따라 전달되는 점수만 더한다.
             for v, outs in graph.items():
                 if outs:
-                    share = self.beta * ranks[v] / len(outs)
+                    share = self.beta * rank[v] / len(outs)
                     for w in outs:
-                        next_ranks[w] += share
+                        next_rank[w] += share
 
-            delta = sum(abs(next_ranks[v] - ranks[v]) for v in graph)
-            ranks, next_ranks = next_ranks, ranks
+            delta = sum(abs(next_rank[v] - rank[v]) for v in graph)
+            rank, next_rank = next_rank, rank
             if delta < self.tol:
                 break
-
-        return ranks
+        return rank
 
     def memory_floats(self):
-        # Python 객체 크기가 아니라 저장하는 실수의 개수를 센다.
-        # 점수 2n개에 매개변수, dangling, base, share, delta와 임시값을
-        # 넉넉히 8개로 잡았다. 입력 인접 리스트에는 전이 확률을 저장하지 않는다.
-        return self._peak_floats
+        return self._float_peak
