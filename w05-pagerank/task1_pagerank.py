@@ -41,7 +41,30 @@ def pagerank(graph, beta=0.85, iterations=100, tol=1e-10):
     you should call it converged. Return the ranks, and set `pagerank.iterations`
     to how many you actually used, because Task 2 measures that.
     """
-    raise NotImplementedError("implement PageRank")
+    pagerank.iterations = 0
+    n = len(graph)
+    if n == 0:
+        return {}
+
+    ranks = {node: 1.0 / n for node in graph}
+    for step in range(iterations):
+        # A surfer at a dead end chooses any page uniformly. This preserves
+        # the probability mass that the broken version simply drops.
+        dangling = sum(ranks[node] for node, links in graph.items() if not links)
+        baseline = (1.0 - beta + beta * dangling) / n
+        updated = {node: baseline for node in graph}
+        for node, links in graph.items():
+            if links:
+                share = beta * ranks[node] / len(links)
+                for target in links:
+                    updated[target] += share
+
+        change = sum(abs(updated[node] - ranks[node]) for node in graph)
+        ranks = updated
+        pagerank.iterations = step + 1
+        if change < tol:
+            break
+    return ranks
 
 
 def pagerank_no_teleport(graph, iterations=100):
@@ -50,7 +73,21 @@ def pagerank_no_teleport(graph, iterations=100):
     It exists so you can watch both failures happen rather than take them on
     trust. The harness checks that it really does fail.
     """
-    raise NotImplementedError("implement the broken version")
+    n = len(graph)
+    if n == 0:
+        return {}
+
+    ranks = {node: 1.0 / n for node in graph}
+    for _ in range(iterations):
+        updated = {node: 0.0 for node in graph}
+        for node, links in graph.items():
+            if links:
+                share = ranks[node] / len(links)
+                for target in links:
+                    updated[target] += share
+        # No redistribution or normalization: dead-end rank must disappear.
+        ranks = updated
+    return ranks
 
 
 # ------------------------------------------------------------------- harness

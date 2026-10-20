@@ -86,10 +86,47 @@ class YourPageRank:
     """
 
     def __init__(self, beta=0.85, tol=1e-10, max_iter=100):
-        raise NotImplementedError("write your PageRank")
+        self.beta, self.tol, self.max_iter = beta, tol, max_iter
+        self.iterations = 0
+        self._peak_floats = 2  # beta and tol; no graph workspace yet
 
     def run(self, graph):
-        raise NotImplementedError
+        n = len(graph)
+        self.iterations = 0
+        self._peak_floats = 2
+        if not n:
+            return {}
+
+        # Keep the input adjacency list and two rank vectors, never an n x n
+        # matrix. Dictionaries also support the graph's original node labels.
+        ranks = dict.fromkeys(graph, 1.0 / n)
+        next_ranks = dict.fromkeys(graph, 0.0)
+        self._peak_floats = 2 * n + 8
+
+        for self.iterations in range(1, self.max_iter + 1):
+            dangling = sum(ranks[v] for v, outs in graph.items() if not outs)
+            base = (1.0 - self.beta + self.beta * dangling) / n
+            for v in next_ranks:
+                next_ranks[v] = base
+
+            # Follow only existing edges. The common teleport/dead-end term
+            # above needs one scalar and an O(n) fill, not n squared entries.
+            for v, outs in graph.items():
+                if outs:
+                    share = self.beta * ranks[v] / len(outs)
+                    for w in outs:
+                        next_ranks[w] += share
+
+            delta = sum(abs(next_ranks[v] - ranks[v]) for v in graph)
+            ranks, next_ranks = next_ranks, ranks
+            if delta < self.tol:
+                break
+
+        return ranks
 
     def memory_floats(self):
-        raise NotImplementedError
+        # Count numeric storage slots, not Python object bytes: 2n rank values
+        # plus a conservative eight scalar slots (parameters, dangling mass,
+        # base, share, delta and two temporary/reduction values). Adjacency
+        # already belongs to the caller and contains no transition floats.
+        return self._peak_floats

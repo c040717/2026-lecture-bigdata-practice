@@ -2,6 +2,7 @@
 */out/
 !w03-lsh/out/
 !w04-stream/out/
+!w05-pagerank/out/
 
 # python
 __pycache__/
