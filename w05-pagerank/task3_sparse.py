@@ -88,7 +88,7 @@ class YourPageRank:
     def __init__(self, beta=0.85, tol=1e-10, max_iter=100):
         self.beta, self.tol, self.max_iter = beta, tol, max_iter
         self.iterations = 0
-        self._peak_floats = 2  # beta and tol; no graph workspace yet
+        self._peak_floats = 2  # 아직 그래프를 읽기 전이므로 beta와 tol만 센다.
 
     def run(self, graph):
         n = len(graph)
@@ -97,8 +97,8 @@ class YourPageRank:
         if not n:
             return {}
 
-        # Keep the input adjacency list and two rank vectors, never an n x n
-        # matrix. Dictionaries also support the graph's original node labels.
+        # 입력 인접 리스트와 점수 사전 두 개만 사용한다.
+        # 사전의 키는 원래 노드 이름을 그대로 쓴다.
         ranks = dict.fromkeys(graph, 1.0 / n)
         next_ranks = dict.fromkeys(graph, 0.0)
         self._peak_floats = 2 * n + 8
@@ -109,8 +109,8 @@ class YourPageRank:
             for v in next_ranks:
                 next_ranks[v] = base
 
-            # Follow only existing edges. The common teleport/dead-end term
-            # above needs one scalar and an O(n) fill, not n squared entries.
+            # 순간이동과 dead end 몫은 위에서 한 번에 반영하고,
+            # 여기서는 실제 간선을 따라 전달되는 점수만 더한다.
             for v, outs in graph.items():
                 if outs:
                     share = self.beta * ranks[v] / len(outs)
@@ -125,8 +125,7 @@ class YourPageRank:
         return ranks
 
     def memory_floats(self):
-        # Count numeric storage slots, not Python object bytes: 2n rank values
-        # plus a conservative eight scalar slots (parameters, dangling mass,
-        # base, share, delta and two temporary/reduction values). Adjacency
-        # already belongs to the caller and contains no transition floats.
+        # Python 객체 크기가 아니라 저장하는 실수의 개수를 센다.
+        # 점수 2n개에 매개변수, dangling, base, share, delta와 임시값을
+        # 넉넉히 8개로 잡았다. 입력 인접 리스트에는 전이 확률을 저장하지 않는다.
         return self._peak_floats

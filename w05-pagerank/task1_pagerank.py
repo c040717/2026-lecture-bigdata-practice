@@ -48,8 +48,7 @@ def pagerank(graph, beta=0.85, iterations=100, tol=1e-10):
 
     ranks = {node: 1.0 / n for node in graph}
     for step in range(iterations):
-        # A surfer at a dead end chooses any page uniformly. This preserves
-        # the probability mass that the broken version simply drops.
+        # dead end에 모인 점수를 모든 페이지에 고르게 나누어 총합을 유지한다.
         dangling = sum(ranks[node] for node, links in graph.items() if not links)
         baseline = (1.0 - beta + beta * dangling) / n
         updated = {node: baseline for node in graph}
@@ -85,7 +84,7 @@ def pagerank_no_teleport(graph, iterations=100):
                 share = ranks[node] / len(links)
                 for target in links:
                     updated[target] += share
-        # No redistribution or normalization: dead-end rank must disappear.
+        # 고장 버전에서는 dead end의 점수를 다시 나누지 않아 총합이 줄어든다.
         ranks = updated
     return ranks
 

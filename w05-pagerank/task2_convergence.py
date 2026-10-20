@@ -39,7 +39,7 @@ def machine(background=None):
             if ctypes.windll.kernel32.GetPhysicallyInstalledSystemMemory(ctypes.byref(ram_kb)):
                 info["ram_bytes"] = ram_kb.value * 1024
         except OSError:
-            pass  # Leave unavailable hardware fields unknown, never guessed.
+            pass  # 확인할 수 없는 하드웨어 정보는 비워 둔다.
     return info
 
 
@@ -76,7 +76,7 @@ def main():
         elapsed = time.perf_counter() - t0
         iters = getattr(pagerank, "iterations", None)
         top = sorted(ranks.items(), key=lambda kv: -kv[1])[:10]
-        # One extra update verifies the stopping condition outside the timed run.
+        # 시간 측정을 마친 뒤 한 번 더 계산해 수렴 여부를 확인한다.
         n = len(graph)
         dangling = sum(ranks[v] for v, outs in graph.items() if not outs)
         base = (1 - beta + beta * dangling) / n
