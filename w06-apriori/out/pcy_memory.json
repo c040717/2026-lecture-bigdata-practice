@@ -1,0 +1,191 @@
+{
+  "config": {
+    "items": 2000,
+    "baskets": 20000,
+    "avg": 20,
+    "seed": 246,
+    "support": 50
+  },
+  "measured_at": "2026-10-27T06:21:04+09:00",
+  "memory_scope": "tracemalloc peak during run, including output; input baskets excluded",
+  "crossover": [
+    {
+      "baseline": {
+        "baskets": 500,
+        "support": 50,
+        "pairs": 12,
+        "peak_counters": 136,
+        "peak_bytes": 113339,
+        "seconds": 0.006458800002292264
+      },
+      "pcy": {
+        "baskets": 500,
+        "support": 50,
+        "pairs": 12,
+        "peak_counters": 12,
+        "peak_bytes": 4533724,
+        "seconds": 1.691459700003179,
+        "bucket_count": 1048576,
+        "bucket_bytes": 4194304,
+        "bitmap_bytes": 131072,
+        "frequent_buckets": 12
+      },
+      "counts_equal": true
+    },
+    {
+      "baseline": {
+        "baskets": 1000,
+        "support": 50,
+        "pairs": 59,
+        "peak_counters": 1078,
+        "peak_bytes": 190596,
+        "seconds": 0.03194719999737572
+      },
+      "pcy": {
+        "baskets": 1000,
+        "support": 50,
+        "pairs": 59,
+        "peak_counters": 59,
+        "peak_bytes": 4542029,
+        "seconds": 2.1863286000007065,
+        "bucket_count": 1048576,
+        "bucket_bytes": 4194304,
+        "bitmap_bytes": 131072,
+        "frequent_buckets": 59
+      },
+      "counts_equal": true
+    },
+    {
+      "baseline": {
+        "baskets": 2000,
+        "support": 50,
+        "pairs": 179,
+        "peak_counters": 6228,
+        "peak_bytes": 833748,
+        "seconds": 0.10076099999787402
+      },
+      "pcy": {
+        "baskets": 2000,
+        "support": 50,
+        "pairs": 179,
+        "peak_counters": 181,
+        "peak_bytes": 4549985,
+        "seconds": 3.3740944000019226,
+        "bucket_count": 1048576,
+        "bucket_bytes": 4194304,
+        "bitmap_bytes": 131072,
+        "frequent_buckets": 180
+      },
+      "counts_equal": true
+    },
+    {
+      "baseline": {
+        "baskets": 4000,
+        "support": 50,
+        "pairs": 551,
+        "peak_counters": 30407,
+        "peak_bytes": 3238588,
+        "seconds": 0.34176060000027064
+      },
+      "pcy": {
+        "baskets": 4000,
+        "support": 50,
+        "pairs": 551,
+        "peak_counters": 588,
+        "peak_bytes": 4550821,
+        "seconds": 6.2083480000001146,
+        "bucket_count": 1048576,
+        "bucket_bytes": 4194304,
+        "bitmap_bytes": 131072,
+        "frequent_buckets": 564
+      },
+      "counts_equal": true
+    },
+    {
+      "baseline": {
+        "baskets": 8000,
+        "support": 50,
+        "pairs": 1630,
+        "peak_counters": 133872,
+        "peak_bytes": 13281820,
+        "seconds": 1.2267859999992652
+      },
+      "pcy": {
+        "baskets": 8000,
+        "support": 50,
+        "pairs": 1630,
+        "peak_counters": 1942,
+        "peak_bytes": 4576869,
+        "seconds": 13.996155900000304,
+        "bucket_count": 1048576,
+        "bucket_bytes": 4194304,
+        "bitmap_bytes": 131072,
+        "frequent_buckets": 1704
+      },
+      "counts_equal": true
+    },
+    {
+      "baseline": {
+        "baskets": 20000,
+        "support": 50,
+        "pairs": 6397,
+        "peak_counters": 820259,
+        "peak_bytes": 102288396,
+        "seconds": 5.591268000000127
+      },
+      "pcy": {
+        "baskets": 20000,
+        "support": 50,
+        "pairs": 6397,
+        "peak_counters": 13017,
+        "peak_bytes": 4680909,
+        "seconds": 44.26031959999818,
+        "bucket_count": 1048576,
+        "bucket_bytes": 4194304,
+        "bitmap_bytes": 131072,
+        "frequent_buckets": 6940
+      },
+      "counts_equal": true
+    }
+  ],
+  "bucket_comparison": [
+    {
+      "baskets": 20000,
+      "support": 50,
+      "pairs": 6397,
+      "peak_counters": 13017,
+      "peak_bytes": 4680909,
+      "seconds": 44.26031959999818,
+      "bucket_count": 1048576,
+      "bucket_bytes": 4194304,
+      "bitmap_bytes": 131072,
+      "frequent_buckets": 6940
+    },
+    {
+      "baskets": 20000,
+      "support": 50,
+      "pairs": 6397,
+      "peak_counters": 300587,
+      "peak_bytes": 27617929,
+      "seconds": 46.90619549999974,
+      "bucket_count": 65536,
+      "bucket_bytes": 262144,
+      "bitmap_bytes": 8192,
+      "frequent_buckets": 21545,
+      "counts_equal": true
+    },
+    {
+      "baskets": 20000,
+      "support": 50,
+      "pairs": 6397,
+      "peak_counters": 820259,
+      "peak_bytes": 102345913,
+      "seconds": 48.72874109999975,
+      "bucket_count": 4096,
+      "bucket_bytes": 16384,
+      "bitmap_bytes": 512,
+      "frequent_buckets": 4096,
+      "counts_equal": true
+    }
+  ]
+}

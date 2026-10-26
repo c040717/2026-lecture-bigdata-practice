@@ -1,0 +1,100 @@
+{
+  "runs": [
+    {
+      "support": 400,
+      "frequent_pairs": 249,
+      "peak_counters": 10585,
+      "seconds": 1.038046800000302,
+      "peak_bytes": 1056102,
+      "measured_at": "2026-10-27T06:17:22+09:00",
+      "frequent_singletons": 146
+    },
+    {
+      "support": 200,
+      "frequent_pairs": 776,
+      "peak_counters": 58626,
+      "seconds": 1.7600251000003482,
+      "peak_bytes": 6383284,
+      "measured_at": "2026-10-27T06:17:23+09:00",
+      "frequent_singletons": 345
+    },
+    {
+      "support": 100,
+      "frequent_pairs": 2244,
+      "peak_counters": 273701,
+      "seconds": 3.232001599997602,
+      "peak_bytes": 26393964,
+      "measured_at": "2026-10-27T06:17:25+09:00",
+      "frequent_singletons": 825
+    },
+    {
+      "support": 50,
+      "frequent_pairs": 6397,
+      "peak_counters": 820259,
+      "seconds": 5.298941599998216,
+      "peak_bytes": 102174068,
+      "measured_at": "2026-10-27T06:17:28+09:00",
+      "frequent_singletons": 1849
+    },
+    {
+      "support": 25,
+      "frequent_pairs": 17045,
+      "peak_counters": 893456,
+      "seconds": 4.981956399999035,
+      "peak_bytes": 102171284,
+      "measured_at": "2026-10-27T06:17:33+09:00",
+      "frequent_singletons": 2000
+    },
+    {
+      "support": 12,
+      "frequent_pairs": 43116,
+      "peak_counters": 893456,
+      "seconds": 4.9807257000029495,
+      "peak_bytes": 102718612,
+      "measured_at": "2026-10-27T06:17:38+09:00",
+      "frequent_singletons": 2000
+    },
+    {
+      "support": 6,
+      "frequent_pairs": 101938,
+      "peak_counters": 893456,
+      "seconds": 5.158480600002804,
+      "peak_bytes": 119356380,
+      "measured_at": "2026-10-27T06:17:43+09:00",
+      "frequent_singletons": 2000
+    },
+    {
+      "support": 3,
+      "frequent_pairs": 250054,
+      "peak_counters": 893456,
+      "seconds": 6.21349950000149,
+      "peak_bytes": 156592388,
+      "measured_at": "2026-10-27T06:17:48+09:00",
+      "frequent_singletons": 2000
+    },
+    {
+      "support": 1,
+      "frequent_pairs": 893456,
+      "peak_counters": 893456,
+      "seconds": 8.124710399999458,
+      "peak_bytes": 327024500,
+      "measured_at": "2026-10-27T06:17:55+09:00",
+      "frequent_singletons": 2000
+    }
+  ],
+  "config": {
+    "items": 2000,
+    "baskets": 20000,
+    "avg": 20,
+    "seed": 246
+  },
+  "machine": {
+    "platform": "Windows-10-10.0.19045-SP0",
+    "processor": "Intel(R) Core(TM) i9-9900KF CPU @ 3.60GHz",
+    "python": "3.13.3",
+    "logical_cpus": 16,
+    "ram_bytes": 34359738368,
+    "background": "Whale browser, interactive desktop applications, Windows Defender and normal Windows background services"
+  },
+  "memory_scope": "tracemalloc peak during run; input baskets excluded"
+}

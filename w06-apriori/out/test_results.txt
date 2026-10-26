@@ -1,0 +1,24 @@
+=== Task 1
+  ok    frequent singletons at support 3             {'beer': 5, 'bread': 5, 'diaper': 5, 'milk': 5}
+  ok    frequent pairs at support 3                  {('beer', 'bread'): 3, ('beer', 'diaper'): 4, ('beer', 'milk'): 3, ('bread', 'diaper'): 3, ('bread', 'milk'): 4, ('diaper', 'milk'): 3}
+  ok    infrequent items excluded from pairs         False
+  ok    diaper -> beer confidence                    0.8
+  ok    rules are sorted by confidence               True
+
+  all ok
+  ok   [1] all five checks
+
+=== Task 2
+  ok   [2] A1 five or more supports  - [1, 3, 6, 12, 25, 50, 100, 200, 400]
+  ok   [2] A1 spans 16x or more  - 400x
+  ok   [2] A6 machine recorded
+  ok   [2] out/explosion.md exists
+
+=== Task 3
+  baseline     pairs  6397   peak counters    820,259     1.58s   -
+  yours        pairs  6397   peak counters     13,017     2.57s   missing 0, extra 0
+  ok   [3] R3 identical frequent pairs
+  ok   [3] R4 fewer peak counters  - 98.4% cut
+ skip  [3] R5 memory accounting in observation.md  - graded by a human
+
+  7 passed, 0 failed, 1 skipped

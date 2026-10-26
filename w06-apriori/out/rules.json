@@ -1,0 +1,175 @@
+{
+  "baskets": 7,
+  "support": 2,
+  "singletons": {
+    "bread": 5,
+    "milk": 5,
+    "diaper": 5,
+    "beer": 5,
+    "cola": 2
+  },
+  "pairs": [
+    {
+      "items": [
+        "beer",
+        "bread"
+      ],
+      "count": 3
+    },
+    {
+      "items": [
+        "beer",
+        "diaper"
+      ],
+      "count": 4
+    },
+    {
+      "items": [
+        "beer",
+        "milk"
+      ],
+      "count": 3
+    },
+    {
+      "items": [
+        "bread",
+        "diaper"
+      ],
+      "count": 3
+    },
+    {
+      "items": [
+        "bread",
+        "milk"
+      ],
+      "count": 4
+    },
+    {
+      "items": [
+        "cola",
+        "diaper"
+      ],
+      "count": 2
+    },
+    {
+      "items": [
+        "cola",
+        "milk"
+      ],
+      "count": 2
+    },
+    {
+      "items": [
+        "diaper",
+        "milk"
+      ],
+      "count": 3
+    }
+  ],
+  "rules": [
+    {
+      "antecedent": "cola",
+      "consequent": "diaper",
+      "confidence": 1.0,
+      "lift": 1.4
+    },
+    {
+      "antecedent": "cola",
+      "consequent": "milk",
+      "confidence": 1.0,
+      "lift": 1.4
+    },
+    {
+      "antecedent": "beer",
+      "consequent": "diaper",
+      "confidence": 0.8,
+      "lift": 1.12
+    },
+    {
+      "antecedent": "bread",
+      "consequent": "milk",
+      "confidence": 0.8,
+      "lift": 1.12
+    },
+    {
+      "antecedent": "diaper",
+      "consequent": "beer",
+      "confidence": 0.8,
+      "lift": 1.12
+    },
+    {
+      "antecedent": "milk",
+      "consequent": "bread",
+      "confidence": 0.8,
+      "lift": 1.12
+    },
+    {
+      "antecedent": "beer",
+      "consequent": "bread",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "beer",
+      "consequent": "milk",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "bread",
+      "consequent": "beer",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "bread",
+      "consequent": "diaper",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "diaper",
+      "consequent": "bread",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "diaper",
+      "consequent": "milk",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "milk",
+      "consequent": "beer",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "milk",
+      "consequent": "diaper",
+      "confidence": 0.6,
+      "lift": 0.84
+    },
+    {
+      "antecedent": "diaper",
+      "consequent": "cola",
+      "confidence": 0.4,
+      "lift": 1.4000000000000001
+    },
+    {
+      "antecedent": "milk",
+      "consequent": "cola",
+      "confidence": 0.4,
+      "lift": 1.4000000000000001
+    }
+  ],
+  "benchmark_candidates": {
+    "support": 50,
+    "items": 2000,
+    "all_possible_pairs": 1999000,
+    "frequent_singletons": 1849,
+    "survivor_possible_pairs": 1708476,
+    "observed_pair_counters": 820259
+  }
+}
